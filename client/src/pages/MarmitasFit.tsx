@@ -289,80 +289,66 @@ export default function MarmitasFit() {
 
           {/* Cart Sidebar */}
           <div className="lg:col-span-1">
-            <Card className={`p-6 sticky top-20 transition-all ${
-              cart.length > 0 ? "border-primary border-2" : ""
-            }`}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold flex items-center">
-                  <ShoppingCart className="w-5 h-5 mr-2 text-primary" />
-                  Meu Pedido
+            <Card className="p-6 sticky top-24">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5 text-primary" />
+                  Carrinho
                 </h2>
                 {cart.length > 0 && (
                   <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
-                    {cart.length}
+                    {cart.length} itens
                   </span>
                 )}
               </div>
 
               {cart.length === 0 ? (
                 <div className="text-center py-12">
-                  <Leaf className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                  <p className="text-muted-foreground">
-                    Selecione as marmitas que deseja
-                  </p>
+                  <ShoppingCart className="w-12 h-12 text-muted-foreground/20 mx-auto mb-4" />
+                  <p className="text-muted-foreground">Seu carrinho está vazio</p>
                 </div>
               ) : (
-                <>
-                  <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
+                <div className="space-y-6">
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                     {cart.map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-3 bg-muted/50 rounded-lg border border-border"
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <p className="font-medium text-sm text-foreground">
-                            {item.name}
-                          </p>
-                          <span className="text-xs font-semibold text-primary">
-                            x{item.quantity}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
+                      <div key={item.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group">
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{item.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            R$ {(item.price * item.quantity).toFixed(2)}
+                            {item.quantity}x R$ {item.price.toFixed(2)}
                           </p>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeFromCart(item.id)}
-                            className="h-6 text-destructive hover:text-destructive"
-                          >
-                            Remover
-                          </Button>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          Remover
+                        </Button>
                       </div>
                     ))}
                   </div>
 
-                  <div className="border-t border-border pt-4 mb-6">
-                    <div className="flex justify-between text-lg font-bold text-primary">
-                      <span>Total:</span>
-                      <span>R$ {totalPrice.toFixed(2)}</span>
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between items-center mb-6">
+                      <span className="font-medium">Total</span>
+                      <span className="text-2xl font-bold text-primary">
+                        R$ {totalPrice.toFixed(2)}
+                      </span>
                     </div>
+
+                    <Button
+                      onClick={handleSendToWhatsApp}
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 text-lg font-bold"
+                    >
+                      Enviar Pedido
+                    </Button>
+                    <p className="text-[10px] text-center text-muted-foreground mt-4">
+                      Ao clicar, você será redirecionado para o WhatsApp das nossas baristas.
+                    </p>
                   </div>
-
-                  <Button
-                    onClick={handleSendToWhatsApp}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Enviar Pedido
-                  </Button>
-
-                  <p className="text-xs text-muted-foreground text-center mt-3">
-                    📍 Retirada no Café da Júlio - Farroupilha
-                  </p>
-                </>
+                </div>
               )}
             </Card>
           </div>
