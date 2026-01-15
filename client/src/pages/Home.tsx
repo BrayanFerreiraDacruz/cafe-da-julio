@@ -18,9 +18,8 @@ export default function Home() {
   };
 
   const handleLoginClick = () => {
-    window.location.href = getLoginUrl();
+    setLocation("/admin");
   };
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation Header */}
