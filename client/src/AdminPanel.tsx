@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,10 +11,6 @@ import { trpc } from "@/lib/trpc";
 import { useBaristaAuth } from "@/_core/hooks/useBaristaAuth";
 import { toast } from "sonner";
 
-/**
- * Admin Panel page - Barista interface for managing daily menu availability
- * Requires barista email/password login. Allows toggling availability of items by category.
- */
 export default function AdminPanel() {
   const [, setLocation] = useLocation();
   const { barista, logout, isAuthenticated, loading, login } = useBaristaAuth();
@@ -24,17 +20,18 @@ export default function AdminPanel() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Fetch menu items
+  // A CONSULTA SÓ É ATIVADA SE ESTIVER AUTENTICADO E NÃO ESTIVER CARREGANDO
+  // Isso impede o erro de "null" ou "undefined" que faz a tela piscar
   const { data: allItems = [] } = trpc.admin.getAllItems.useQuery(undefined, {
-    enabled: isAuthenticated,
+    enabled: !!isAuthenticated && !loading,
+    retry: false,
   });
 
-  const dailyItems = allItems.filter((item) => item.category === "daily");
-  const salgadosItems = allItems.filter((item) => item.category === "salgados");
-  const docesItems = allItems.filter((item) => item.category === "doces");
-  const marmitasItems = allItems.filter((item) => item.category.startsWith("marmitas"));
+  const dailyItems = allItems.filter((item: any) => item.category === "daily");
+  const salgadosItems = allItems.filter((item: any) => item.category === "salgados");
+  const docesItems = allItems.filter((item: any) => item.category === "doces");
+  const marmitasItems = allItems.filter((item: any) => item.category.startsWith("marmitas"));
 
-  // Mutation for updating availability
   const updateAvailability = trpc.admin.updateItemAvailability.useMutation({
     onSuccess: () => {
       toast.success("Disponibilidade atualizada!");
@@ -50,8 +47,6 @@ export default function AdminPanel() {
     try {
       await login(email, password);
       toast.success("Login realizado com sucesso!");
-      setEmail("");
-      setPassword("");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao fazer login");
     } finally {
@@ -69,60 +64,56 @@ export default function AdminPanel() {
     }
   };
 
+  // ESTADO DE CARREGAMENTO INICIAL
   if (loading) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="min-h-screen bg-[#1a0f0a] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 bg-muted rounded-full animate-pulse mx-auto mb-4" />
-          <p className="text-muted-foreground">Carregando...</p>
+          <div className="w-12 h-12 border-4 border-[#d4a574] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#d4a574]">Verificando acesso...</p>
         </div>
       </div>
     );
   }
 
-  // Login form if not authenticated
+  // TELA DE LOGIN (CORRIGIDA)
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#2a1810] to-[#1a0f0a] text-foreground flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-[#3d2817] border-[#8b6f47]">
+        <Card className="w-full max-w-md bg-[#3d2817] border-[#8b6f47] shadow-2xl">
           <div className="p-8">
             <h1 className="text-2xl font-bold text-center mb-2 text-[#d4a574]">Painel Admin</h1>
-            <p className="text-center text-muted-foreground mb-6">Acesso para Baristas</p>
+            <p className="text-center text-[#8b6f47] mb-6">Café da Júlio - Farroupilha</p>
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <Label htmlFor="email" className="text-[#d4a574]">
-                  Email
-                </Label>
+                <Label htmlFor="email" className="text-[#d4a574]">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder="demo@cafe.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-[#2a1810] border-[#8b6f47] text-foreground"
+                  className="bg-[#2a1810] border-[#8b6f47] text-white focus:ring-[#d4a574]"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-[#d4a574]">
-                  Senha
-                </Label>
+                <Label htmlFor="password" className="text-[#d4a574]">Senha</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-[#2a1810] border-[#8b6f47] text-foreground pr-10"
+                    className="bg-[#2a1810] border-[#8b6f47] text-white pr-10 focus:ring-[#d4a574]"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-2.5 text-[#8b6f47] hover:text-[#d4a574]"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -131,29 +122,22 @@ export default function AdminPanel() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#d4a574] text-[#1a0f0a] hover:bg-[#c49464]"
+                className="w-full bg-[#d4a574] text-[#1a0f0a] font-bold hover:bg-[#c49464]"
                 disabled={isLoggingIn}
               >
-                {isLoggingIn ? "Entrando..." : "Entrar"}
+                {isLoggingIn ? "Autenticando..." : "Entrar no Painel"}
               </Button>
             </form>
-
-            <div className="mt-6 p-4 bg-[#2a1810] rounded border border-[#8b6f47]">
-              <p className="text-sm text-muted-foreground">
-                <strong>Demo:</strong> Use email: demo@cafe.com | senha: demo123
-              </p>
-            </div>
           </div>
         </Card>
       </div>
     );
   }
 
-  // Admin panel
+  // PAINEL ADMINISTRATIVO (CORRIGIDO)
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2a1810] to-[#1a0f0a] text-foreground">
-      {/* Header */}
-      <div className="bg-[#3d2817] border-b border-[#8b6f47] sticky top-0 z-50">
+    <div className="min-h-screen bg-[#1a0f0a] text-foreground pb-12">
+      <header className="bg-[#3d2817] border-b border-[#8b6f47] sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
@@ -165,189 +149,65 @@ export default function AdminPanel() {
               <ArrowLeft size={20} />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-[#d4a574]">Painel Admin</h1>
-              <p className="text-sm text-muted-foreground">Olá, {barista?.email}</p>
+              <h1 className="text-xl font-bold text-[#d4a574]">Gestão de Menu</h1>
+              <p className="text-xs text-[#8b6f47]">{barista?.email}</p>
             </div>
           </div>
-          <Button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white"
-          >
-            <LogOut size={18} className="mr-2" />
-            Sair
+          <Button onClick={handleLogout} variant="destructive" size="sm">
+            <LogOut size={18} className="mr-2" /> Sair
           </Button>
         </div>
-      </div>
+      </header>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6 p-4 bg-blue-900/20 border border-blue-700 rounded-lg flex gap-3">
-          <AlertCircle className="text-blue-400 flex-shrink-0" size={20} />
-          <div>
-            <p className="font-semibold text-blue-300">Gerenciar Disponibilidade</p>
-            <p className="text-sm text-blue-200">
-              Ative ou desative itens para controlar o que está disponível hoje
-            </p>
-          </div>
-        </div>
-
+      <main className="max-w-4xl mx-auto px-4 py-8">
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-[#3d2817] border border-[#8b6f47]">
-            <TabsTrigger value="daily" className="data-[state=active]:bg-[#8b6f47]">
-              Diários
-            </TabsTrigger>
-            <TabsTrigger value="salgados" className="data-[state=active]:bg-[#8b6f47]">
-              Salgados
-            </TabsTrigger>
-            <TabsTrigger value="doces" className="data-[state=active]:bg-[#8b6f47]">
-              Doces
-            </TabsTrigger>
-            <TabsTrigger value="marmitas" className="data-[state=active]:bg-[#8b6f47]">
-              Marmitas
-            </TabsTrigger>
+            <TabsTrigger value="daily" className="data-[state=active]:bg-[#8b6f47] text-[#d4a574]">Diários</TabsTrigger>
+            <TabsTrigger value="salgados" className="data-[state=active]:bg-[#8b6f47] text-[#d4a574]">Salgados</TabsTrigger>
+            <TabsTrigger value="doces" className="data-[state=active]:bg-[#8b6f47] text-[#d4a574]">Doces</TabsTrigger>
+            <TabsTrigger value="marmitas" className="data-[state=active]:bg-[#8b6f47] text-[#d4a574]">Marmitas</TabsTrigger>
           </TabsList>
 
-          {/* Daily Items Tab */}
-          <TabsContent value="daily" className="space-y-4 mt-6">
-            {dailyItems.length === 0 ? (
-              <Card className="bg-[#3d2817] border-[#8b6f47] p-6 text-center">
-                <p className="text-muted-foreground">Nenhum item de café disponível</p>
-              </Card>
-            ) : (
-              dailyItems.map((item) => (
-                <ItemToggle
-                  key={item.id}
-                  item={item}
-                  onToggle={(isAvailable) =>
-                    updateAvailability.mutate({
-                      itemId: item.id,
-                      isAvailable,
-                    })
-                  }
-                  isLoading={updateAvailability.isPending}
-                />
-              ))
-            )}
-          </TabsContent>
-
-          {/* Salgados Tab */}
-          <TabsContent value="salgados" className="space-y-4 mt-6">
-            {salgadosItems.length === 0 ? (
-              <Card className="bg-[#3d2817] border-[#8b6f47] p-6 text-center">
-                <p className="text-muted-foreground">Nenhum salgado disponível</p>
-              </Card>
-            ) : (
-              salgadosItems.map((item) => (
-                <ItemToggle
-                  key={item.id}
-                  item={item}
-                  onToggle={(isAvailable) =>
-                    updateAvailability.mutate({
-                      itemId: item.id,
-                      isAvailable,
-                    })
-                  }
-                  isLoading={updateAvailability.isPending}
-                />
-              ))
-            )}
-          </TabsContent>
-
-          {/* Doces Tab */}
-          <TabsContent value="doces" className="space-y-4 mt-6">
-            {docesItems.length === 0 ? (
-              <Card className="bg-[#3d2817] border-[#8b6f47] p-6 text-center">
-                <p className="text-muted-foreground">Nenhum doce disponível</p>
-              </Card>
-            ) : (
-              docesItems.map((item) => (
-                <ItemToggle
-                  key={item.id}
-                  item={item}
-                  onToggle={(isAvailable) =>
-                    updateAvailability.mutate({
-                      itemId: item.id,
-                      isAvailable,
-                    })
-                  }
-                  isLoading={updateAvailability.isPending}
-                />
-              ))
-            )}
-          </TabsContent>
-
-          {/* Marmitas Tab */}
-          <TabsContent value="marmitas" className="space-y-4 mt-6">
-            {marmitasItems.length === 0 ? (
-              <Card className="bg-[#3d2817] border-[#8b6f47] p-6 text-center">
-                <p className="text-muted-foreground">Nenhuma marmita disponível</p>
-              </Card>
-            ) : (
-              marmitasItems.map((item) => (
-                <ItemToggle
-                  key={item.id}
-                  item={item}
-                  onToggle={(isAvailable) =>
-                    updateAvailability.mutate({
-                      itemId: item.id,
-                      isAvailable,
-                    })
-                  }
-                  isLoading={updateAvailability.isPending}
-                />
-              ))
-            )}
-          </TabsContent>
+          <div className="mt-8 space-y-4">
+            {renderTabContent(selectedTab, { dailyItems, salgadosItems, docesItems, marmitasItems }, updateAvailability)}
+          </div>
         </Tabs>
-      </div>
+      </main>
     </div>
   );
 }
 
-/**
- * Item toggle component for availability control
- */
-function ItemToggle({
-  item,
-  onToggle,
-  isLoading,
-}: {
-  item: any;
-  onToggle: (isAvailable: boolean) => void;
-  isLoading: boolean;
-}) {
-  return (
-    <Card className="bg-[#3d2817] border-[#8b6f47] p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h3 className="font-semibold text-[#d4a574]">{item.name}</h3>
-          {item.description && (
-            <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-          )}
-          <p className="text-sm font-medium text-[#8b6f47] mt-2">
-            R$ {parseFloat(item.price).toFixed(2)}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {item.isAvailable ? (
-            <div className="flex items-center gap-1 text-green-400">
-              <CheckCircle2 size={18} />
-              <span className="text-sm">Disponível</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 text-red-400">
-              <AlertCircle size={18} />
-              <span className="text-sm">Indisponível</span>
-            </div>
-          )}
-          <Switch
-            checked={item.isAvailable}
-            onCheckedChange={onToggle}
-            disabled={isLoading}
-            className="data-[state=checked]:bg-green-600"
-          />
-        </div>
+function renderTabContent(tab: string, items: any, mutation: any) {
+  const currentItems = 
+    tab === "daily" ? items.dailyItems :
+    tab === "salgados" ? items.salgadosItems :
+    tab === "doces" ? items.docesItems : items.marmitasItems;
+
+  if (currentItems.length === 0) {
+    return (
+      <Card className="bg-[#3d2817] border-[#8b6f47] p-8 text-center text-[#8b6f47]">
+        Não há itens cadastrados nesta categoria.
+      </Card>
+    );
+  }
+
+  return currentItems.map((item: any) => (
+    <Card key={item.id} className="bg-[#3d2817] border-[#8b6f47] p-4 flex items-center justify-between">
+      <div>
+        <h3 className="font-bold text-[#d4a574]">{item.name}</h3>
+        <p className="text-sm text-[#8b6f47]">R$ {parseFloat(item.price).toFixed(2)}</p>
+      </div>
+      <div className="flex items-center gap-4">
+        <span className={`text-xs font-bold ${item.isAvailable ? 'text-green-500' : 'text-red-500'}`}>
+          {item.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
+        </span>
+        <Switch
+          checked={item.isAvailable}
+          onCheckedChange={(val) => mutation.mutate({ itemId: item.id, isAvailable: val })}
+          disabled={mutation.isPending}
+          className="data-[state=checked]:bg-green-600"
+        />
       </div>
     </Card>
-  );
+  ));
 }

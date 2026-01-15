@@ -1,4 +1,3 @@
-// client/src/App.tsx
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -20,7 +19,10 @@ function Router() {
       <Route path="/marmitas" component={MarmitasFit} />
       <Route path="/doppio" component={DoppioVermelho} />
       <Route path="/localizacao" component={Location} />
-      <Route path="/admin" component={AdminPanel} />
+      {/* Forçamos a renderização do AdminPanel aqui */}
+      <Route path="/admin">
+        {(params) => <AdminPanel />}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
