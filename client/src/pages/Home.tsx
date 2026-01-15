@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
+
 import { Coffee, Leaf, MapPin, ShoppingCart, LogOut, LogIn, Settings } from "lucide-react";
 
 /**
@@ -17,9 +18,14 @@ export default function Home() {
     await logout();
   };
 
-  const handleLoginClick = () => {
-  // Altere de window.location.href para setLocation
-  setLocation("/admin");
+  // NO ARQUIVO Home.tsx, mude de:
+// const handleLoginClick = () => {
+//   window.location.href = getLoginUrl();
+// };
+
+// PARA ISSO:
+const handleLoginClick = () => {
+  setLocation("/admin"); // Isso chama a página que você já definiu no App.tsx
 };
   return (
     <div className="min-h-screen bg-background text-foreground">

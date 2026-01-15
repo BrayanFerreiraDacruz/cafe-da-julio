@@ -1,3 +1,4 @@
+// client/src/App.tsx
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -19,15 +20,13 @@ function Router() {
       <Route path="/marmitas" component={MarmitasFit} />
       <Route path="/doppio" component={DoppioVermelho} />
       <Route path="/localizacao" component={Location} />
-      {/* Rota correta que o botão agora vai encontrar */}
       <Route path="/admin" component={AdminPanel} />
-      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
@@ -39,5 +38,3 @@ function App() {
     </ErrorBoundary>
   );
 }
-
-export default App;
