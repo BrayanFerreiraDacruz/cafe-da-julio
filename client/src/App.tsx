@@ -9,7 +9,7 @@ import Orders from "./pages/Orders";
 import MarmitasFit from "./pages/MarmitasFit";
 import DoppioVermelho from "./pages/DoppioVermelho";
 import Location from "./pages/Location";
-import AdminPanel from "./pages/AdminPanel";
+import AdminPanel from "./AdminPanel";
 
 function Router() {
   return (

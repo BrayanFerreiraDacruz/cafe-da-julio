@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import bcrypt from "bcrypt";
@@ -104,7 +104,12 @@ export async function getAvailableMenuItemsByCategory(category: string) {
   const db = await getDb();
   if (!db) return [];
   return await db.select().from(menuItems)
-    .where(eq(menuItems.category, category as any));
+    .where(
+      and(
+        eq(menuItems.category, category as any),
+        eq(menuItems.isAvailable, true)
+      )
+    );
 }
 
 export async function getAllMenuItems() {

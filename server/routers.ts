@@ -48,7 +48,7 @@ export const appRouter = router({
       .query(({ ctx }) => {
         const session = (ctx.req as any).session;
         if (!session?.baristaId) return null;
-        return { baristaId: session.baristaId, email: session.email };
+        return { id: session.baristaId, email: session.email };
       }),
     
     // Logout

@@ -9,19 +9,25 @@ type UseAuthOptions = {
  * useAuth hook - Returns null user since we're not using OAuth
  * This is kept for compatibility with existing code
  */
+import { useBaristaAuth } from "./useBaristaAuth";
+
 export function useAuth(options?: UseAuthOptions) {
-  const state = useMemo(() => {
+  const { barista, loading, error, isAuthenticated, logout, refresh } = useBaristaAuth();
+  
+  const user = useMemo(() => {
+    if (!barista) return null;
     return {
-      user: null,
-      loading: false,
-      error: null,
-      isAuthenticated: false,
+      ...barista,
+      role: "admin"
     };
-  }, []);
+  }, [barista]);
 
   return {
-    ...state,
-    refresh: () => {},
-    logout: async () => {},
+    user,
+    loading,
+    error,
+    isAuthenticated,
+    refresh,
+    logout,
   };
 }

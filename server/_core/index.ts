@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { COOKIE_NAME } from "@shared/const";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -33,6 +34,28 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // Session middleware for barista login
+  app.use((req, res, next) => {
+    const cookie = req.headers.cookie;
+    if (cookie) {
+      const cookies = Object.fromEntries(cookie.split('; ').map(c => c.split('=')));
+      const sessionCookie = cookies[COOKIE_NAME];
+      if (sessionCookie) {
+        try {
+          const decoded = decodeURIComponent(sessionCookie);
+          // Se for JSON (nosso login de barista)
+          if (decoded.startsWith('{')) {
+            (req as any).session = JSON.parse(decoded);
+          }
+        } catch (e) {
+          // Ignora erros de parse
+        }
+      }
+    }
+    next();
+  });
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // tRPC API

@@ -25,8 +25,8 @@ export default function Home() {
 
 // PARA ISSO:
 const handleLoginClick = () => {
-  setLocation("/admin"); // Isso chama a página que você já definiu no App.tsx
-};
+    setLocation("/admin");
+  };
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation Header */}
