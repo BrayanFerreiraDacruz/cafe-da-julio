@@ -29,7 +29,11 @@ export default function AdminPanel() {
   const dailyItems = allItems.filter((item: any) => item.category === "daily");
   const salgadosItems = allItems.filter((item: any) => item.category === "salgados");
   const docesItems = allItems.filter((item: any) => item.category === "doces");
-  const marmitasItems = allItems.filter((item: any) => item.category.startsWith("marmitas"));
+  const marmitasItems = allItems.filter((item: any) => 
+    item.category === "marmitas_frango" || 
+    item.category === "marmitas_carne" || 
+    item.category === "sopas"
+  );
 
   const updateAvailability = trpc.admin.updateItemAvailability.useMutation({
     onSuccess: () => toast.success("Disponibilidade atualizada!"),
@@ -92,7 +96,7 @@ export default function AdminPanel() {
               {isLoggingIn ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-          <p className="mt-4 text-xs text-[#8b6f47] text-center">demo@cafe.com | demo123</p>
+          {/* Credenciais removidas para produção */}
         </Card>
       </div>
     );
@@ -114,7 +118,7 @@ export default function AdminPanel() {
             <TabsTrigger value="daily">Diários</TabsTrigger>
             <TabsTrigger value="salgados">Salgados</TabsTrigger>
             <TabsTrigger value="doces">Doces</TabsTrigger>
-            <TabsTrigger value="marmitas">Marmitas</TabsTrigger>
+            <TabsTrigger value="marmitas">Marmitas/Sopas</TabsTrigger>
           </TabsList>
 
           <div className="mt-8 space-y-4">

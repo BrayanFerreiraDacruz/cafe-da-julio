@@ -118,6 +118,12 @@ export async function getAllMenuItems() {
   return db.select().from(menuItems);
 }
 
+export async function createMenuItem(item: any) {
+  const db = await getDb();
+  if (!db) return null;
+  return db.insert(menuItems).values(item);
+}
+
 export async function updateMenuItemAvailability(itemId: number, isAvailable: boolean) {
   const db = await getDb();
   if (!db) return null;

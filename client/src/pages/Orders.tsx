@@ -33,6 +33,9 @@ export default function Orders() {
   const { data: dailyItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "daily" });
   const { data: salgadosItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "salgados" });
   const { data: docesItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "doces" });
+  const { data: frangoItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "marmitas_frango" });
+  const { data: carneItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "marmitas_carne" });
+  const { data: sopasItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "sopas" });
 
   const addToCart = (item: any) => {
     setCart((prevCart) => {
@@ -163,10 +166,13 @@ export default function Orders() {
           {/* Menu Section */}
           <div className="lg:col-span-2">
             <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-6">
-                <TabsTrigger value="daily">Disponíveis do Dia</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-6">
+                <TabsTrigger value="daily">Do Dia</TabsTrigger>
                 <TabsTrigger value="salgados">Salgados</TabsTrigger>
                 <TabsTrigger value="doces">Doces</TabsTrigger>
+                <TabsTrigger value="frango">Marmitas Frango</TabsTrigger>
+                <TabsTrigger value="carne">Marmitas Carne</TabsTrigger>
+                <TabsTrigger value="sopas">Sopas</TabsTrigger>
               </TabsList>
 
               <TabsContent value="daily" className="space-y-4">
@@ -213,6 +219,42 @@ export default function Orders() {
                     {docesItems.map((item) => (
                       <MenuItem key={item.id} item={item} />
                     ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="frango" className="space-y-4">
+                {frangoItems.length === 0 ? (
+                  <Card className="p-8 text-center">
+                    <p className="text-muted-foreground">Nenhuma marmita de frango disponível</p>
+                  </Card>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {frangoItems.map((item) => <MenuItem key={item.id} item={item} />)}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="carne" className="space-y-4">
+                {carneItems.length === 0 ? (
+                  <Card className="p-8 text-center">
+                    <p className="text-muted-foreground">Nenhuma marmita de carne disponível</p>
+                  </Card>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {carneItems.map((item) => <MenuItem key={item.id} item={item} />)}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="sopas" className="space-y-4">
+                {sopasItems.length === 0 ? (
+                  <Card className="p-8 text-center">
+                    <p className="text-muted-foreground">Nenhuma sopa disponível</p>
+                  </Card>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {sopasItems.map((item) => <MenuItem key={item.id} item={item} />)}
                   </div>
                 )}
               </TabsContent>
