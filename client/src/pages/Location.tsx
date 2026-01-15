@@ -23,14 +23,14 @@ export default function Location() {
   const handleWhatsApp = () => {
     const message = "Olá! Gostaria de mais informações sobre o Café da Júlio.";
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554996027120?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/5554999999999?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-border">
         <div className="container flex items-center justify-between h-16">
           <Button
             variant="ghost"

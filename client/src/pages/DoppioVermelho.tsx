@@ -13,7 +13,7 @@ export default function DoppioVermelho() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-border">
         <div className="container flex items-center justify-between h-16">
           <Button
             variant="ghost"

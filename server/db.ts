@@ -1,18 +1,23 @@
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, menuItems, orders, galleryPhotos, InsertOrder, InsertGalleryPhoto } from "../drizzle/schema";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import bcrypt from "bcrypt";
+import { InsertUser, users, menuItems, orders, galleryPhotos, InsertOrder, InsertGalleryPhoto, baristaCredentials, InsertBaristaCredential, BaristaCredential } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _client: ReturnType<typeof postgres> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      _client = postgres(process.env.DATABASE_URL);
+      _db = drizzle(_client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
+      _client = null;
     }
   }
   return _db;
@@ -33,7 +38,6 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     const values: InsertUser = {
       openId: user.openId,
     };
-    const updateSet: Record<string, unknown> = {};
 
     const textFields = ["name", "email", "loginMethod"] as const;
     type TextField = (typeof textFields)[number];
@@ -43,33 +47,33 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       if (value === undefined) return;
       const normalized = value ?? null;
       values[field] = normalized;
-      updateSet[field] = normalized;
     };
 
     textFields.forEach(assignNullable);
 
     if (user.lastSignedIn !== undefined) {
       values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
     }
     if (user.role !== undefined) {
       values.role = user.role;
-      updateSet.role = user.role;
     } else if (user.openId === ENV.ownerOpenId) {
       values.role = 'admin';
-      updateSet.role = 'admin';
     }
 
     if (!values.lastSignedIn) {
       values.lastSignedIn = new Date();
     }
 
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
+    // PostgreSQL upsert using ON CONFLICT
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
+      set: {
+        name: values.name,
+        email: values.email,
+        loginMethod: values.loginMethod,
+        role: values.role,
+        lastSignedIn: values.lastSignedIn,
+      },
     });
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
@@ -149,4 +153,36 @@ export async function deleteGalleryPhoto(photoId: number) {
   const db = await getDb();
   if (!db) return null;
   return db.delete(galleryPhotos).where(eq(galleryPhotos.id, photoId));
+}
+
+// Barista Authentication Functions
+export async function createBaristaCredential(email: string, password: string, name: string) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const passwordHash = await bcrypt.hash(password, 10);
+  return db.insert(baristaCredentials).values({
+    email,
+    passwordHash,
+    name,
+  });
+}
+
+export async function getBaristaByEmail(email: string): Promise<BaristaCredential | null> {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.select().from(baristaCredentials)
+    .where(eq(baristaCredentials.email, email))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function verifyBaristaPassword(email: string, password: string): Promise<BaristaCredential | null> {
+  const barista = await getBaristaByEmail(email);
+  if (!barista) return null;
+  
+  const isValid = await bcrypt.compare(password, barista.passwordHash);
+  return isValid ? barista : null;
 }

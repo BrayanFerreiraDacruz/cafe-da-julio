@@ -79,7 +79,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             {loading ? (
               <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
-            ) : isAuthenticated && user?.role === "admin" ? (
+            ) : isAuthenticated && (user as any)?.role === "admin" ? (
               <>
                 <Button
                   variant="outline"

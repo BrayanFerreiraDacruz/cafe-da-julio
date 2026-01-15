@@ -75,7 +75,7 @@ export default function MarmitasFit() {
     message += `*Retirada:* Café da Júlio - Farroupilha`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554996027120?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/5554999999999?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
     toast.success("Redirecionando para WhatsApp...");
