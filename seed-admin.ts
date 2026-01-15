@@ -1,5 +1,6 @@
 import "dotenv/config";
-import { createBaristaCredential, getBaristaByEmail, createMenuItem, getAllMenuItems } from "./server/db";
+import { createBaristaCredential, getBaristaByEmail, createMenuItem, getAllMenuItems, getDb } from "./server/db";
+import { menuItems } from "./drizzle/schema";
 
 async function main() {
   // 1. Garantir usuário Admin
@@ -20,13 +21,16 @@ async function main() {
     console.error("[Seed] Erro ao criar admin:", e);
   }
 
-  // 2. Adicionar Itens de Menu
-  console.log("[Seed] Verificando itens de menu...");
-  const existingItems = await getAllMenuItems();
-  
-  if (existingItems.length > 5) {
-    console.log("[Seed] Itens de menu já parecem estar cadastrados.");
-    process.exit(0);
+  // 2. Limpar itens antigos para garantir a nova estrutura (opcional, mas recomendado para mudar categorias)
+  console.log("[Seed] Limpando itens de menu antigos para atualizar categorias...");
+  const db = await getDb();
+  if (db) {
+    try {
+      await db.delete(menuItems);
+      console.log("[Seed] Itens antigos removidos.");
+    } catch (e) {
+      console.error("[Seed] Erro ao limpar itens:", e);
+    }
   }
 
   const items = [
@@ -50,20 +54,20 @@ async function main() {
     { name: "Frango Xadrez Fit com Mix de Grãos", category: "marmitas_frango", price: "24.00", description: "Toque oriental saudável" },
     { name: "Strogonoff de Frango (Creme de Leite Light) com Arroz", category: "marmitas_frango", price: "23.00", description: "Confort food na versão light" },
 
-    // MARMITAS DE CARNE
-    { name: "Patinho Moído com Arroz e Feijão Preto", category: "marmitas_carne", price: "25.00", description: "O clássico brasileiro" },
-    { name: "Carne de Panela com Mandioca e Cenoura", category: "marmitas_carne", price: "26.00", description: "Sabor de casa" },
-    { name: "Almôndegas de Carne com Esparguete Integral", category: "marmitas_carne", price: "24.00", description: "Massa integral com molho artesanal" },
-    { name: "Escondidinho de Carne Moída com Puré de Abóbora", category: "marmitas_carne", price: "25.00", description: "Baixo carboidrato e muito sabor" },
+    // MARMITAS DE CARNE (APENAS BOVINA)
+    { name: "Patinho Moído com Arroz e Feijão Preto", category: "marmitas_carne", price: "25.00", description: "Carne bovina magra e nutritiva" },
+    { name: "Carne de Panela com Mandioca e Cenoura", category: "marmitas_carne", price: "26.00", description: "Carne bovina cozida lentamente" },
+    { name: "Almôndegas de Carne com Esparguete Integral", category: "marmitas_carne", price: "24.00", description: "Almôndegas bovinas artesanais" },
+    { name: "Escondidinho de Carne Moída com Puré de Abóbora", category: "marmitas_carne", price: "25.00", description: "Carne bovina com purê cremoso" },
 
     // SOPAS E CALDOS
     { name: "Creme de Mandioquinha com Carne Desfiada", category: "sopas", price: "18.00", description: "Cremoso e nutritivo" },
     { name: "Canja de Galinha Integral", category: "sopas", price: "16.00", description: "Leve e reconfortante" },
-    { name: "Sopa de Legumes com Músculo", category: "sopas", price: "17.00", description: "Rica em vitaminas" },
-    { name: "Caldo Verde Fit (com Couve e Chouriço Light)", category: "sopas", price: "19.00", description: "Versão saudável do clássico português" },
+    { name: "Sopa de Legumes com Músculo", category: "sopas", price: "17.00", description: "Rica em vitaminas com carne bovina" },
+    { name: "Caldo Verde Fit (com Couve e Chouriço Light)", category: "sopas", price: "19.00", description: "Versão saudável do clássico" },
   ];
 
-  console.log(`[Seed] Cadastrando ${items.length} itens de menu...`);
+  console.log(`[Seed] Cadastrando ${items.length} itens de menu atualizados...`);
   for (const item of items) {
     try {
       await createMenuItem(item);

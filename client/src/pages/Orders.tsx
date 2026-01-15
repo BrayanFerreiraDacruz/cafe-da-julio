@@ -107,7 +107,10 @@ export default function Orders() {
 
     // Encode message for WhatsApp
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554999999999?text=${encodedMessage}`;
+    // Usando o primeiro número como padrão, ou alternando entre eles
+    const phoneNumbers = ["5554996027120", "5554991371486"];
+    const selectedPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+    const whatsappUrl = `https://wa.me/${selectedPhone}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
     toast.success("Redirecionando para WhatsApp...");
@@ -171,8 +174,8 @@ export default function Orders() {
                 <TabsTrigger value="salgados">Salgados</TabsTrigger>
                 <TabsTrigger value="doces">Doces</TabsTrigger>
                 <TabsTrigger value="frango">Marmitas Frango</TabsTrigger>
-                <TabsTrigger value="carne">Marmitas Carne</TabsTrigger>
-                <TabsTrigger value="sopas">Sopas</TabsTrigger>
+                <TabsTrigger value="carne">Marmitas Carne Bovina</TabsTrigger>
+                <TabsTrigger value="sopas">Sopas e Caldos</TabsTrigger>
               </TabsList>
 
               <TabsContent value="daily" className="space-y-4">
