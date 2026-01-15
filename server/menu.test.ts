@@ -12,8 +12,8 @@ function createPublicContext(): TrpcContext {
       headers: {},
     } as TrpcContext["req"],
     res: {
-      clearCookie: () => {},
-    } as TrpcContext["res"],
+      clearCookie: () => { },
+    } as unknown as TrpcContext["res"],
   };
 }
 
@@ -38,7 +38,7 @@ function createAdminContext(): TrpcContext {
     } as TrpcContext["req"],
     res: {
       clearCookie: () => {},
-    } as TrpcContext["res"],
+    } as unknown as TrpcContext["res"],
   };
 }
 

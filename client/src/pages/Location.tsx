@@ -23,7 +23,7 @@ export default function Location() {
   const handleWhatsApp = () => {
     const message = "Olá! Gostaria de mais informações sobre o Café da Júlio.";
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554999999999?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/5554996027120?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
   };
 
