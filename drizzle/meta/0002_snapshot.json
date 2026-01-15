@@ -1,0 +1,17 @@
+{
+  "version": "5",
+  "dialect": "postgresql",
+  "id": "cbe11336-efa0-4c8d-b1f1-21cb432eebaf",
+  "prevId": "f9366e04-8ced-44c2-b752-f5f6b1bd35a0",
+  "tables": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {},
+    "indexes": {}
+  }
+}

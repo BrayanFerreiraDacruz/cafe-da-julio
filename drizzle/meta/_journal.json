@@ -1,6 +1,6 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
@@ -14,6 +14,13 @@
       "version": "5",
       "when": 1768436170625,
       "tag": "0001_careless_franklin_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1768450026521,
+      "tag": "0002_thankful_skin",
       "breakpoints": true
     }
   ]
