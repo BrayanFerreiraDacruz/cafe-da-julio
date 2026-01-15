@@ -18,8 +18,9 @@ export default function Home() {
   };
 
   const handleLoginClick = () => {
-    setLocation("/admin");
-  };
+  // Altere de window.location.href para setLocation
+  setLocation("/admin");
+};
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation Header */}
