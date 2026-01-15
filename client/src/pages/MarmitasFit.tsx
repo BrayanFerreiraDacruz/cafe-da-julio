@@ -28,7 +28,7 @@ export default function MarmitasFit() {
   // Fetch marmita items by category
   const { data: frangoItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "marmitas_frango" });
   const { data: carneItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "marmitas_carne" });
-  const { data: sopaItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "marmitas_sopa" });
+  const { data: sopaItems = [] } = trpc.menu.getAvailableByCategory.useQuery({ category: "sopas" });
 
   const addToCart = (item: any) => {
     setCart((prevCart) => {
@@ -75,7 +75,9 @@ export default function MarmitasFit() {
     message += `*Retirada:* Café da Júlio - Farroupilha`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554999999999?text=${encodedMessage}`;
+    const phoneNumbers = ["5554996027120", "5554991371486"];
+    const selectedPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+    const whatsappUrl = `https://wa.me/${selectedPhone}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
     toast.success("Redirecionando para WhatsApp...");
@@ -188,7 +190,7 @@ export default function MarmitasFit() {
                 </TabsTrigger>
                 <TabsTrigger value="carne" className="flex items-center gap-2">
                   <Droplet className="w-4 h-4" />
-                  Carne/Suína
+                  Carne Bovina
                 </TabsTrigger>
                 <TabsTrigger value="sopa" className="flex items-center gap-2">
                   <Droplet className="w-4 h-4" />
@@ -231,7 +233,7 @@ export default function MarmitasFit() {
                   <div className="flex items-start gap-3">
                     <Leaf className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
                     <div>
-                      <h3 className="font-semibold text-foreground">Opções com Carne Bovina e Suína</h3>
+                      <h3 className="font-semibold text-foreground">Opções com Carne Bovina</h3>
                       <p className="text-sm text-muted-foreground">
                         Carnes de qualidade preparadas com técnicas especiais para máximo sabor.
                       </p>
