@@ -85,6 +85,12 @@ export const appRouter = router({
 
   // Admin Router - for barista inventory management
   admin: router({
+    // NOVA FUNÇÃO ADICIONADA AQUI PARA RESOLVER O ERRO DO BOTÃO
+    isAdmin: publicProcedure.query(({ ctx }) => {
+      const session = (ctx.req as any).session;
+      return { isAdmin: !!session?.baristaId };
+    }),
+
     // Update menu item availability (barista only)
     updateItemAvailability: baristaAuthMiddleware
       .input(z.object({ itemId: z.number(), isAvailable: z.boolean() }))
