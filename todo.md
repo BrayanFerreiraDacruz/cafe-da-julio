@@ -84,3 +84,25 @@
 - [x] Melhorar contraste e legibilidade em tema escuro
 - [x] Atualizar localização para Rua Julio de Castilhos, Centro, Farroupilha
 - [x] Integrar coordenadas corretas no Google Maps
+
+
+## Deployment no Render (v1.2)
+- [ ] Criar banco de dados MySQL no Render
+- [ ] Configurar variáveis de ambiente
+- [ ] Deploy da aplicação no Render
+- [ ] Testar integração com banco remoto
+
+
+## PostgreSQL Migration (v1.3)
+- [x] Atualizar schema para PostgreSQL
+- [x] Atualizar connection string
+- [x] Testar localmente com PostgreSQL
+- [x] Atualizar guias de deployment
+
+
+## Authentication Fix (v1.4)
+- [x] Implementar login simples email/senha para baristas
+- [x] Remover dependência de OAuth Manus
+- [x] Criar tabela de credenciais de baristas
+- [x] Proteger painel admin com autenticação
+- [x] Testar login no Render
